@@ -108,6 +108,7 @@ public class ClientHandler implements Runnable {
         if (user != null) {
             currentUser = user;
             userDAO.updateStatus(user.getUserId(), "ONLINE");
+            currentUser.setStatus("ONLINE");
             userHandlers.put(user.getUsername(), this);
             sendMessage("LOGIN:SUCCESS:" + user.getUserId() + "," + user.getUsername() + ","
                     + user.getTotalScore() + "," + user.getTotalWins() + "," + user.getStatus());
@@ -366,7 +367,9 @@ public class ClientHandler implements Runnable {
         if (command.length < 2 || currentUser == null) {
             return;
         }
-        new UserDAO().updateStatus(currentUser.getUserId(), command[1].split(",")[0]);
+        String newStatus = command[1].split(",")[0].trim();
+        new UserDAO().updateStatus(currentUser.getUserId(), newStatus);
+        currentUser.setStatus(newStatus);                // <<< THÊM DÒNG NÀY
         broadcastOnlineUsers();
     }
 
